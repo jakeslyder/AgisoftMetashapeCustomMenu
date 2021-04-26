@@ -3553,12 +3553,13 @@ def organizeCalGroups():
                 sensor.type = camera.sensor.type
                 if film:
                     sensor.film_camera = True
-                sensor.calibration = camera.sensor.calibration
-                sensor.width = camera.sensor.width
-                sensor.height = camera.sensor.height
-                sensor.focal_length = camera.sensor.focal_length
-                sensor.pixel_height = camera.sensor.pixel_height
-                sensor.pixel_width = camera.sensor.pixel_width
+                else:
+                    sensor.calibration = camera.sensor.calibration
+                    sensor.width = camera.sensor.width
+                    sensor.height = camera.sensor.height
+                    sensor.focal_length = camera.sensor.focal_length
+                    sensor.pixel_height = camera.sensor.pixel_height
+                    sensor.pixel_width = camera.sensor.pixel_width
                 camera.sensor = sensor
             else:
                 sensor = d[a]

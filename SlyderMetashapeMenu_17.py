@@ -3540,7 +3540,8 @@ def organizeCalGroups():
             d ={}
             for i in sensorList:
                 d[i.label] = i
-            # Get camera group label and see if there is already a camera group with that name; make group without name when cameras aren't in folders
+            # Get camera group label and see if there is already a camera group with that name; 
+            #make group without name when cameras aren't in folders
             a = str(camera.group).split("'")
             if len(a)> 1:
                 a = a[1]
@@ -3553,12 +3554,13 @@ def organizeCalGroups():
                 sensor.type = camera.sensor.type
                 if film:
                     sensor.film_camera = True
-                sensor.calibration = camera.sensor.calibration
-                sensor.width = camera.sensor.width
-                sensor.height = camera.sensor.height
-                sensor.focal_length = camera.sensor.focal_length
-                sensor.pixel_height = camera.sensor.pixel_height
-                sensor.pixel_width = camera.sensor.pixel_width
+                else:
+                    sensor.calibration = camera.sensor.calibration
+                    sensor.width = camera.sensor.width
+                    sensor.height = camera.sensor.height
+                    sensor.focal_length = camera.sensor.focal_length
+                    sensor.pixel_height = camera.sensor.pixel_height
+                    sensor.pixel_width = camera.sensor.pixel_width
                 camera.sensor = sensor
             else:
                 sensor = d[a]
