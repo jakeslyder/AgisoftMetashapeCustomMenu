@@ -2191,8 +2191,8 @@ class ReprojAccDlg(QtWidgets.QDialog):
                 print("No more points selected at this level, error reduction complete to a level of %s" %curVal)
                 solved = 1
             elif nselected > maxPnts:
-                print("Too many points selected, This shouldn't happen!")
-                break
+                curVal += 0.01
+                print("Adjusting current value upward")
             else:
                 chunk.point_cloud.removeSelectedPoints()
                 print("Removed %s points on iteration number %s" %(nselected,count))
@@ -2200,6 +2200,7 @@ class ReprojAccDlg(QtWidgets.QDialog):
                 f = Metashape.PointCloud.Filter()
                 f.init(chunk, criterion = Metashape.PointCloud.Filter.ReprojectionError)
                 count += 1
+                curVal = minVal
 
         #Print message to indicate process done
         label = chunk.label
