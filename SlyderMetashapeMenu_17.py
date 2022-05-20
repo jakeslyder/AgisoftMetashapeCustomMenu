@@ -2680,7 +2680,7 @@ class CreateTextFileDlg(QtWidgets.QDialog):
 
 		#Add extra instructions
 		self.label2 = QtWidgets.QLabel()
-		self.label2.setText("\nIn the text boxes below, do not use special characters, eg :;()<> \n")
+		self.label2.setText("\nIn the text boxes below, do not use special characters, eg :;()<>\\/ \n")
 
 		#Add Project Name Widget
 		self.projectName = QtWidgets.QLineEdit()
@@ -2700,7 +2700,7 @@ class CreateTextFileDlg(QtWidgets.QDialog):
 
 		#Create a group to hold the choices
 		self.accUseConst = QtWidgets.QComboBox()
-		accUseOptions = ["None, public domain", "Non-BLM Data-Internal Use Only", "Non-BLM Data-Not for Distribution", "Generally Releasable", "Non-public, not for distribution", "Non-public, Internal, Autorized Persons", "Non-public draft data"]
+		accUseOptions = ["None, public domain", "Non-BLM Data-Internal Use Only", "Non-BLM Data-Not for Distribution", "Generally Releasable", "Non-public, not for distribution", "Non-public, Internal, Authorized Persons", "Non-public draft data"]
 		for i in accUseOptions:
 			self.accUseConst.addItem(i)
 		self.accUseConst.setCurrentText("None")
@@ -2822,7 +2822,7 @@ class CreateTextFileDlg(QtWidgets.QDialog):
 		elif self.accUseConst.currentText() =="Non-public, not for distribution":
 			Usage_term = "Although these data might be available to internal Bureau of Land Management staff, contractors and partners, they should not be released. These data might contain sensitive information, and can only be accessed by the public through a FOIA request."
 			print(Usage_term)
-		elif self.accUseConst.currentText() =="Non-public, Internal, Autorized Persons":
+		elif self.accUseConst.currentText() =="Non-public, Internal, Authorized Persons":
 			Usage_term = "These data might contain sensitive information, and may not be releasable under the Privacy Act. Access to these records is limited to AUTHORIZED PERSONS ONLY."
 			print(Usage_term)
 		else:
@@ -2938,6 +2938,36 @@ class CreateTextFileDlg(QtWidgets.QDialog):
 				else:
 					#No warnins, just say done!
 					Metashape.app.messageBox("Done")
+
+def camGroupsToChunks():
+	import Metashape
+	proceed = Metashape.app.getBool("WARNING: This tool will split the active chunk up so that each camera group has its own chunk.  Within these subsequent chunks, only cameras in that specific camera group will be active.  All others will be disabled.  Note: All contents of the chunk will be copied.  Continue?")
+	if proceed:
+
+		doc = Metashape.app.document
+
+
+		current_chunk = doc.chunk
+
+		#Get camera groups in current chunk
+		camera_groups = []
+		for grp in current_chunk.camera_groups:
+			camera_groups.append(grp.label)
+
+		print(camera_groups)
+
+
+		for i in camera_groups:
+			print("Starting group {}".format(i))
+			new_chunk = current_chunk.copy()
+			new_chunk.label = i
+			for camera in new_chunk.cameras:
+				if camera.group is None:
+					camera.enabled = False
+				elif camera.group.label != i:
+					camera.enabled = False
+				else:
+					camera.enabled = True
 
 
 def scaleRegion():
@@ -4315,22 +4345,18 @@ def main():
 		Metashape.app.addMenuItem("BLM NOC Tools/Adjust Region/Get Coordinate System from Bounding Region", cstobb)
 		Metashape.app.addMenuItem("BLM NOC Tools/Adjust Region/Copy current bounding region to all chunks", copybb)
 		Metashape.app.addMenuItem("BLM NOC Tools/Adjust Region/Scale region larger or smaller", scaleRegion)
-		Metashape.app.addMenuItem("BLM NOC Tools/Split chunk into smaller chunks for processing", csic)
-		#PhotoScan.app.addMenuItem("Custom menu/Align Bounding Region to Coordinate System", bbtocs)
-		#PhotoScan.app.addMenuItem("Custom menu/Get Coordinate System from Bounding Region", cstobb)
-
 		Metashape.app.addMenuItem("BLM NOC Tools/Organize Cameras/Split Photos into Camera Groups based on EE Text File", organizeCamGroups)
 		Metashape.app.addMenuItem("BLM NOC Tools/Organize Cameras/Reorganize calibration groups to match workspace camera groups", organizeCalGroups)
 		Metashape.app.addMenuItem("BLM NOC Tools/Image, Tie Point, and Marker Quality Metrics/Export tiepoint uncertainty and error to .txt file", export_tiepoint_error)
 		Metashape.app.addMenuItem("BLM NOC Tools/Image, Tie Point, and Marker Quality Metrics/Estimate Image Quality, Reprojection Error, and Projections and Save to .txt File", export_image_quality)
 		Metashape.app.addMenuItem("BLM NOC Tools/Image, Tie Point, and Marker Quality Metrics/Calculate Horizontal RMSE for Markers", calculateHorizontalRMSE)
+		Metashape.app.addMenuItem("BLM NOC Tools/Create new chunk for each camera group in active chunk", camGroupsToChunks)
+		Metashape.app.addMenuItem("BLM NOC Tools/Split chunk into smaller chunks for processing", csic)
 		Metashape.app.addMenuItem("BLM NOC Tools/Adjust accuracy and optimize cameras", optimizecamcal)
 		Metashape.app.addMenuItem("BLM NOC Tools/Remove Blue, unpinned marker(s)", removeblue)
 		Metashape.app.addMenuItem("BLM NOC Tools/Rename markers to integers", renamemarkers)
 		Metashape.app.addMenuItem("BLM NOC Tools/Add offset to camera elevations", add_altitude)
 		Metashape.app.addMenuItem("BLM NOC Tools/Mask Images by Color", mask_by_color)
-
-
 		Metashape.app.addMenuItem("BLM NOC Tools/Create shapes or spreadsheet of image footprints", footprints)
 		Metashape.app.addMenuItem("BLM NOC Tools/Create text file with solved coordinates and keywords to update image EXIF", geotag_photoscan1)
 		
